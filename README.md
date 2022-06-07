@@ -15,3 +15,4 @@ What it should bo eventually:
 - [ ] also allow unmanaged by Google photos
 - [ ] also de-duplicate photo if I add it, and it's present in my collection
 - [ ] "fat jar" distribution. I hope a single binary one day
+- [ ] bells and whistles: tests (yes!), code coverage, security checks, license audit

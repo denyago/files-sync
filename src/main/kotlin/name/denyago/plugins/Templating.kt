@@ -1,54 +1,35 @@
 package name.denyago.plugins
 
-import io.ktor.http.*
-import io.ktor.server.application.*
-import io.ktor.server.html.*
-import io.ktor.server.request.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
-import kotlinx.css.*
-import kotlinx.html.*
+import com.github.mustachejava.DefaultMustacheFactory
+import io.ktor.server.application.Application
+import io.ktor.server.application.call
+import io.ktor.server.application.install
+import io.ktor.server.mustache.Mustache
+import io.ktor.server.mustache.MustacheContent
+import io.ktor.server.response.respond
+import io.ktor.server.routing.get
+import io.ktor.server.routing.routing
+import name.denyago.pages.DriveState
+import name.denyago.pages.HddState
+import name.denyago.pages.IndexPage
 
 fun Application.configureTemplating() {
-    routing {
-        get("/html-dsl") {
-            call.respondHtml {
-                body {
-                    h1 { +"HTML" }
-                    ul {
-                        for (n in 1..10) {
-                            li { +"$n" }
-                        }
-                    }
-                }
-            }
-        }
-        get("/styles.css") {
-            call.respondCss {
-                body {
-                    backgroundColor = Color.darkBlue
-                    margin(0.px)
-                }
-                rule("h1.page-title") {
-                    color = Color.white
-                }
-            }
-        }
+    install(Mustache) {
+        mustacheFactory = DefaultMustacheFactory("templates")
+    }
 
-        get("/html-css-dsl") {
-            call.respondHtml {
-                head {
-                    link(rel = "stylesheet", href = "/styles.css", type = "text/css")
-                }
-                body {
-                    h1(classes = "page-title") {
-                        +"Hello from Ktor!"
-                    }
-                }
-            }
+    routing {
+        get("/") {
+            val page = IndexPage(
+                hddState = HddState(busy = true),
+                driveStates = listOf(
+                    DriveState("/mnt/Photos", connected = true),
+                    DriveState("/mnt/Docs", connected = false),
+                    DriveState("/mnt/Movies", connected = true)
+                ),
+                lastDriveError = "Non-root can't mount volumes."
+            )
+            call.respond(MustacheContent("index.hbs", page))
         }
     }
-}
-suspend inline fun ApplicationCall.respondCss(builder: CSSBuilder.() -> Unit) {
-    this.respondText(CSSBuilder().apply(builder).toString(), ContentType.Text.CSS)
 }
