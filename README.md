@@ -1,4 +1,6 @@
 # Sync Files to local drive
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fdenyago%2Ffiles-sync.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fdenyago%2Ffiles-sync?ref=badge_shield)
+
 
 Everything in the cloud. But it's just a bunch of servers belonging to somebody.
 
@@ -15,3 +17,6 @@ What it should bo eventually:
 - [ ] also allow unmanaged by Google photos
 - [ ] also de-duplicate photo if I add it, and it's present in my collection
 - [ ] "fat jar" distribution. I hope a single binary one day
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fdenyago%2Ffiles-sync.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fdenyago%2Ffiles-sync?ref=badge_large)
