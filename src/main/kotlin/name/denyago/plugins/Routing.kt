@@ -28,9 +28,6 @@ fun Application.configureRouting() {
     }
 
     routing {
-        get("/") {
-            call.respondText("Hello World!")
-        }
         get<MyLocation> {
             call.respondText("Location: name=${it.name}, arg1=${it.arg1}, arg2=${it.arg2}")
         }
@@ -41,7 +38,7 @@ fun Application.configureRouting() {
         get<Type.List> {
             call.respondText("Inside $it")
         }
-        // Static plugin. Try to access `/static/index.html`
+        // Static plugin.`
         static("/static") {
             resources("static")
         }

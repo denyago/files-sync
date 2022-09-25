@@ -1,0 +1,42 @@
+<article class="tile is-child notification ">
+    <p class="title">Connected drives</p>
+    {{#lastDriveError}}
+    <div class="notification is-danger">
+        <p class="subtitle">Error connecting:</p>
+        <p>{{ . }}</p>
+    </div>
+    {{/lastDriveError}}
+    <table class="table is-fullwidth">
+        {{#driveStates}}
+        <tr>
+            <td>
+                    <span class="icon">
+                      <i class="mdi mdi-folder"></i>
+                    </span>
+                <span>{{ mountPoint }}</span>
+            </td>
+            <td>
+                {{#connected}}
+                    <span class="tag is-primary">connected</span>
+                {{/connected}}
+                {{^connected}}
+                    <span class="tag is-light">no connected</span>
+                {{/connected}}
+
+            </td>
+            <td>
+                {{#connected}}
+                    <button class="button is-small is-responsive is-danger">
+                        Disconnect
+                    </button>
+                {{/connected}}
+                {{^connected}}
+                    <button class="button is-small is-responsive is-primary">
+                        Connect
+                    </button>
+                {{/connected}}
+            </td>
+        </tr>
+    {{/driveStates}}
+    </table>
+</article>
