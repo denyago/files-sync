@@ -32,7 +32,7 @@ dependencies {
     implementation("io.ktor:ktor-server-host-common-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-status-pages-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-webjars-jvm:$ktor_version")
-    implementation("org.webjars:jquery:3.6.1")
+    implementation("io.ktor:ktor-server-sessions:$ktor_version")
     implementation("io.ktor:ktor-server-mustache:$ktor_version")
     implementation("io.ktor:ktor-server-metrics-micrometer-jvm:$ktor_version")
     implementation("io.micrometer:micrometer-registry-prometheus:$prometeus_version")
@@ -47,4 +47,9 @@ dependencies {
     testImplementation("io.mockk:mockk:1.13.2")
     testImplementation("it.skrape:skrapeit-core:+")
     testImplementation("it.skrape:skrapeit-ktor:+")
+}
+
+tasks.named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar").configure {
+    minimize()
+    archiveClassifier.set("")
 }
