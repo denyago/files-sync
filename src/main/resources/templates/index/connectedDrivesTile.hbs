@@ -6,7 +6,7 @@
         <p>{{ . }}</p>
     </div>
     {{/lastDriveError}}
-    <table class="table is-fullwidth">
+    <table class="table is-fullwidth" id="connected-drive-states">
         {{#driveStates}}
         <tr>
             <td>
@@ -20,7 +20,7 @@
                     <span class="tag is-primary">connected</span>
                 {{/connected}}
                 {{^connected}}
-                    <span class="tag is-light">no connected</span>
+                    <span class="tag is-light">not connected</span>
                 {{/connected}}
 
             </td>
