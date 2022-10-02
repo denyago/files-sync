@@ -1,52 +1,58 @@
 package name.denyago
 
-import io.ktor.client.request.*
-import io.ktor.client.statement.*
-import io.ktor.http.*
-import io.ktor.server.testing.*
-import name.denyago.plugins.*
+import com.lordcodes.turtle.ShellScript
+import io.ktor.client.request.* // ktlint-disable no-wildcard-imports
+import io.ktor.client.statement.* // ktlint-disable no-wildcard-imports
+import io.ktor.http.* // ktlint-disable no-wildcard-imports
+import io.ktor.server.testing.* // ktlint-disable no-wildcard-imports
+import io.mockk.every
+import io.mockk.mockk
+import it.skrape.core.htmlDocument
+import it.skrape.selects.html5.body
+import it.skrape.selects.text
+import name.denyago.volumes.MontedVolumes
+import name.denyago.web.startPage
+import org.junit.Test
 import org.kodein.di.DI
 import org.kodein.di.bind
+import org.kodein.di.instance
 import org.kodein.di.singleton
-import java.util.*
-import kotlin.test.*
+import kotlin.test.assertContains
+import kotlin.test.assertEquals
 
 class ApplicationTest {
     @Test
     fun testRoot() = testApplication {
+        val mockShellScript = mockk<ShellScript>()
+        every { mockShellScript.command("mount") } returns """
+/dev/disk3s1s1 on / (apfs, sealed, local, read-only, journaled)
+/dev/disk3s5 on /System/Volumes/Data (apfs, local, journaled, nobrowse, protect)
+/dev/whatever on /mnt/Photos (ext4, and, other, stuff)
+map auto_home on /System/Volumes/Data/home (autofs, automounted, nobrowse)"""
+
         application {
-            configureTemplating()
+            startPage(
+                DI {
+                    bind<ShellScript>() with instance(mockShellScript)
+                    bind<MontedVolumes>() with singleton { MontedVolumes(instance()) }
+                }
+            )
         }
         client.get("/").apply {
             assertEquals(status, HttpStatusCode.OK)
-            assertContains(bodyAsText(), "Welcome to the start page of our homeserver!")
-        }
-    }
-
-    @Test
-    fun testProvideFakeRandom() {
-        val log = arrayListOf<String>()
-        testApplication {
-            /** Calls the [myKodeinApp] module with a [Random] class that always return 7. */
-            application {
-                myKodeinApp(
-                    DI {
-                        bind<Random>() with singleton {
-                            object : Random() {
-                                override fun next(bits: Int): Int = 7.also { log += "Random.next" }
-                            }
-                        }
+            htmlDocument(bodyAsText()) {
+                body {
+                    findFirst("p#welcome-message") {
+                        assertContains(text, "Welcome to the start page of our homeserver!")
                     }
-                )
-            }
 
-            /**
-             * Checks that the single route, returns a constant value '7' from the mock,
-             * and that the [Random.next] has been called just once
-             */
-            val response = client.get("/random")
-            assertEquals("Random number in 0..99: 7", response.bodyAsText())
-            assertEquals(listOf("Random.next"), log)
+                    findAll("table#connected-drive-states tr") {
+                        assertContains(text, "/mnt/Photos connected")
+                        assertContains(text, "/mnt/Docs not connected")
+                        assertContains(text, "/mnt/Movies not connected")
+                    }
+                }
+            }
         }
     }
 }
